@@ -7,7 +7,6 @@ import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import model.Formacion;
 
 public class FormacionService {
@@ -28,10 +27,12 @@ public class FormacionService {
 	}
 	
 	public void altaFormacion(Formacion formacion) {
-		wt.path("/alta")
-		  .request(MediaType.TEXT_PLAIN)
-		  .post(Entity.entity(formacion,MediaType.APPLICATION_JSON));
-		
+		String resp=(String)wt
+		.path("/alta")
+		.request(MediaType.TEXT_PLAIN)
+		.post(Entity.entity(formacion, MediaType.APPLICATION_JSON)) //Response
+		.getEntity();
+		//no usamos el String devuelto por el servicio de cursos
 		
 	}
 }
