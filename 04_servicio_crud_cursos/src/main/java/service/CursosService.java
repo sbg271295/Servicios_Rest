@@ -6,7 +6,11 @@ import java.util.List;
 import model.Curso;
 
 public class CursosService {
-	private static List<Curso> cursos=new ArrayList<>();
+	private static List<Curso> cursos=new ArrayList<>(List.of(new Curso("Java 21","Programación",100,200),
+			new Curso("Inglés","Idiomas",200,340),
+			new Curso("Francés","Idiomas",150,320),
+			new Curso("Python","Programación",60,110)
+			));
 	public void alta(Curso curso) {
 			cursos.add(curso);
 		
