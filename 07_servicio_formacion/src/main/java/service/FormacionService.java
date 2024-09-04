@@ -22,8 +22,8 @@ public class FormacionService {
 		.get(Formacion[].class);
 		
 		return Arrays.stream(todos)
-		.filter(f->f.getArea().equals(area))
-		.toList();
+		             .filter(f->f.getArea().equals(area))
+		             .toList();
 	}
 	
 	public void altaFormacion(Formacion formacion) {
