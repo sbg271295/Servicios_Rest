@@ -9,30 +9,45 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import jakarta.annotation.PostConstruct;
 import model.Formacion;
 @Service
 public class FormacionServiceImpl implements FormacionService {
 	@Value("${usuario}")
 	String user;
-	@Value("${pwd}")
-	String pass;
+	@Value("${contra}")
+	String contra;
+	@Value("${cursos.url}")
+	String urlcursos;
+	@Value("${cursos.port}")
+	String port;
 	
 	@Value("${admin.user}")
 	String userAdmin;
 	@Value("${admin.pass}")
 	String passAdmin;
-	String url="http://localhost:8000/cursos/";
+	String url;
 	RestClient restClient;
 	public FormacionServiceImpl(RestClient restClient) { //inyección por constructor
 		this.restClient=restClient;
+		
+	}
+	
+	@PostConstruct
+	public void init() {
+		url="http://"+urlcursos+":"+port+"/cursos/";
 	}
 
 	@Override
 	public List<Formacion> buscarPorArea(String area) {
+		System.out.println("url de curso:"+urlcursos);
+		System.out.println("puerto de curso:"+port);
+		System.out.println("usuario:"+user);
+		System.out.println("password:"+contra);
 		return Arrays.stream(restClient
 				.get()
 				.uri(url+"recuperartodos")
-				.header("Authorization", "Basic "+getBase64(user, pass))
+				.header("Authorization", "Basic "+getBase64(user, contra))
 				.retrieve()
 				.body(Formacion[].class)//Formacion[]
 			)//Stream<Formacion>
