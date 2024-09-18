@@ -17,10 +17,7 @@ public class FormacionServiceImpl implements FormacionService {
 	String user;
 	@Value("${contra}")
 	String contra;
-	@Value("${cursos.url}")
-	String urlcursos;
-	@Value("${cursos.port}")
-	String port;
+	
 	
 	@Value("${admin.user}")
 	String userAdmin;
@@ -35,13 +32,11 @@ public class FormacionServiceImpl implements FormacionService {
 	
 	@PostConstruct
 	public void init() {
-		url="http://"+urlcursos+":"+port+"/cursos/";
+		url="http://servicio-cursos/cursos/";
 	}
 
 	@Override
 	public List<Formacion> buscarPorArea(String area) {
-		System.out.println("url de curso:"+urlcursos);
-		System.out.println("puerto de curso:"+port);
 		System.out.println("usuario:"+user);
 		System.out.println("password:"+contra);
 		return Arrays.stream(restClient

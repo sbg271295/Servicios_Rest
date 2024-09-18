@@ -2,6 +2,7 @@ package init;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestClient;
 
@@ -13,8 +14,14 @@ public class Application {
 	}
 	
 	@Bean
-	public RestClient getClient() {
-		return RestClient.create();
+	@LoadBalanced
+	public RestClient.Builder getBuilder(){
+		return RestClient.builder();
 	}
+	
+	@Bean
+	public RestClient getClient(RestClient.Builder builder) {
+		return builder.build();
+	} 
 
 }
