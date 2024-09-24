@@ -24,13 +24,13 @@ public class ClientesController {
     }
 
     // 1. Devolución de un Cliente a partir de la combinación usuario y contraseña
-    @GetMapping("/login")
-    public ClienteDto login(@RequestParam String usuario,@RequestParam String pass) {
+    @GetMapping("login/{usuario}/{pass}")
+    public ClienteDto login(@PathVariable String usuario,@PathVariable String pass) {
         ClienteDto cliente_Encontrado = clienteService.searchByUsuarioandContrasena(usuario,pass);
         return cliente_Encontrado;
     }
 
-    @PostMapping("/registro")
+    @PostMapping("registro")
     public ResponseEntity<Void> registrarCliente(@RequestBody ClienteDto clienteDto) {
         try {
             clienteService.altaCliente(clienteDto);
@@ -42,8 +42,8 @@ public class ClientesController {
     }
 
     // 3. Devolución de un Cliente a partir del usuario
-    @GetMapping("/clientesUsuario")
-    public ClienteDto getClientePorUsuario(@RequestParam String usuario) {
+    @GetMapping("clientesUsuario/{usuario}")
+    public ClienteDto getClientePorUsuario(@PathVariable String usuario) {
         ClienteDto cliente = clienteService.searchByUsuario(usuario);
         return cliente;
     }

@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.client.RestClient;
 @EnableJpaRepositories(basePackages = {"dao"})
 @EntityScan(basePackages = {"entities"})
-@SpringBootApplication(scanBasePackages = {"entities","dao","controller","service","utilidades","init"})
+@SpringBootApplication(scanBasePackages = {"entities","controller","service","utilidades","init"})
 public class Application{
 
 	public static void main(String[] args) {
@@ -24,6 +24,6 @@ public class Application{
 	@Bean
 	public RestClient getClient(RestClient.Builder builder) {
 		return builder.build();
-	} 
+	}
 }
 
