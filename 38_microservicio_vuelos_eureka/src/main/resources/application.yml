@@ -13,7 +13,7 @@ spring:
     username: root
     password: root
   application:
-    name: servicio-viajes
+    name: servicio-vuelos
   jpa:
     hibernate:
       naming:

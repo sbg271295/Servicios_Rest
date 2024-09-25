@@ -8,9 +8,9 @@ public class ReservaDto {
     private String nombreHotel;
     private String destinoVuelo;
     private String fechaVuelo;
-    private int precio;
+    private double precio;
 
-	public ReservaDto(int idReserva, String nombreHotel, String destinoVuelo, String fechaVuelo, int precio) {
+	public ReservaDto(int idReserva, String nombreHotel, String destinoVuelo, String fechaVuelo, double precio) {
 		super();
 		this.idReserva = idReserva;
 		this.nombreHotel = nombreHotel;
@@ -45,10 +45,10 @@ public class ReservaDto {
 	public void setFechaVuelo(String fechaVuelo) {
 		this.fechaVuelo = fechaVuelo;
 	}
-	public int getPrecio() {
+	public double getPrecio() {
 		return precio;
 	}
-	public void setPrecio(int precio) {
+	public void setPrecio(double precio) {
 		this.precio = precio;
 	}
 

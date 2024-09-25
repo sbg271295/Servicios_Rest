@@ -42,17 +42,13 @@ public class VueloServiceImpl implements VueloService{
 	}
 
 	@Override
-	public void updatePlazas(int idVuelo, int plazasAnt, int plazasNuevas) {
+	public void updatePlazas(int idVuelo, int plazasNuevas) {
 		Vuelo vuelo = vuelosDao.findById(idVuelo);
 
-	    if (vuelo != null) {
-	        // Verificamos si el número de plazas actuales coincide con plazasAnt
-	        if (vuelo.getPlazas() == plazasAnt) {
+	    if (vuelo != null) {	  
 	            vuelo.setPlazas(plazasNuevas);
 	            vuelosDao.save(vuelo);
-	        } else {
-	            throw new IllegalArgumentException("El número de plazas actuales no coincide con el valor esperado.");
-	        }
+	      
 	    } else {
 	        throw new IllegalArgumentException("Vuelo no encontrado.");
 	    }

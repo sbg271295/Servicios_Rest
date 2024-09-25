@@ -5,5 +5,6 @@ import model.ReservaDto;
 
 public interface ReservaService {
     List<ReservaDto> getReservasByUsuario(String usuario);
-    void altaReserva(String nombreHotel, String destinoVuelo, String fechaVuelo, double precio, String usuario); 
+    void altaReserva(ReservaDto reserva, int plazas);
+    void updatePlazas(int idVuelo,int plazasNew);
 }

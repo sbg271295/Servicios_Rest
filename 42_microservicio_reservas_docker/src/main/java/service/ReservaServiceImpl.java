@@ -1,5 +1,6 @@
 package service;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import dao.ClientesDao;
 import dao.HotelesDao;
@@ -25,18 +27,11 @@ import utilidades.Mapeador;
 
 @Service
 public class ReservaServiceImpl implements ReservaService{
-   @Autowired 
-	
+@Autowired
 	@Value("${usuario}")
-	String user;
+	String usuario;
 	@Value("${contra}")
 	String contra;
-	
-	
-	@Value("${admin.user}")
-	String userAdmin;
-	@Value("${admin.pass}")
-	String passAdmin;
 	String url;
 	ReservaDao reservaDao;
 	VuelosDao vuelosDao;
@@ -44,6 +39,10 @@ public class ReservaServiceImpl implements ReservaService{
 	ClientesDao clientesDao;
 	Mapeador mapeador;
 	RestClient restClient;
+	
+String url_servicio_vuelo_actualizar = "http://servicio-vuelos/vuelos/actualizar";
+
+
 
 	public ReservaServiceImpl(ReservaDao reservaDao, VuelosDao vuelosDao, HotelesDao hotelesDao,
 			ClientesDao clientesDao, Mapeador mapeador,RestClient restClient) {
@@ -60,40 +59,20 @@ public class ReservaServiceImpl implements ReservaService{
 		url="http://servicio-reservas/reservas/";
 	}
 
-	  @Override
-	    public List<ReservaDto> getReservasByUsuario(String usuario) {
-	        /* 
-	        // Método anterior:
+	  @Override       
 	        public List<ReservaDto> getReservasByUsuario(String usuario) {
 	            List<Reserva> reservas = reservaDao.findReservasByUsuario(usuario);
 	            return reservas.stream()
 	                           .map(mapeador::reservaEntitytoDto)
 	                           .collect(Collectors.toList());
 	        }
-	        */
-
-	        // Obtener reservas del servicio REST
-	        Reserva[] reservas = restClient
-	            .get()
-	            .uri(url + "usuario/{usuario}", usuario)
-	            .header("Authorization", "Basic " + getBase64(user, contra))
-	            .retrieve()
-	            .body(Reserva[].class)
-	            ; // Ejecutar sincrónicamente
-
-	        // Convertir a ReservaDto
-	        return Arrays.stream(reservas)
-	                     .map(mapeador::reservaEntitytoDto)
-	                     .collect(Collectors.toList());
-	    }
+	  
 
 	    @Override
-	    public void altaReserva(String nombreHotel, String destinoVuelo, String fechaVuelo, double precio, String usuario) {
-	        /* 
-	        // Método anterior:
-	        public void altaReserva(String nombreHotel, String destinoVuelo, String fechaVuelo, double precio, String usuario) {
-	            Hotel hotel = hotelesDao.findByNombre(nombreHotel);
-	            Vuelo vuelo = vuelosDao.findByDestinoAndFecha(destinoVuelo, fechaVuelo);
+	    public void altaReserva(ReservaDto reserva, int plazas) {
+
+	            Hotel hotel = hotelesDao.findByNombre(reserva.getNombreHotel());
+	            Vuelo vuelo = vuelosDao.findByDestinoAndFecha(reserva.getDestinoVuelo(), reserva.getFechaVuelo());
 
 	            if (hotel == null || vuelo == null ) {
 	                throw new IllegalArgumentException("No se encontró el hotel, vuelo o cliente especificado");
@@ -103,54 +82,29 @@ public class ReservaServiceImpl implements ReservaService{
 	            nuevaReserva.setIdreserva(0);  
 	            nuevaReserva.setHotel(hotel);  
 	            nuevaReserva.setvuelo(vuelo);  
-	            nuevaReserva.setPrecio(vuelo.getPrecio());   
+	            nuevaReserva.setPrecio(vuelo.getPrecio()*plazas);   
 	            nuevaReserva.setUsuario(usuario); 
 
 	            Reserva reservaGuardada = reservaDao.save(nuevaReserva);
+	            
+	            updatePlazas(vuelo.getIdVuelo(),(vuelo.getPlazas()-plazas));
+	   
 	        }
-	        */
+	    @Override
+	    public void updatePlazas(int idVuelo, int plazasNew) {
+	    	
+	    	String uri = String.format("%s/%d/%d", url_servicio_vuelo_actualizar, idVuelo, plazasNew);
+	       	
+	    	restClient
+			.put()
+			.uri(uri)
+			.header("Authorization", "Basic "+getBase64(usuario, contra))
+			.contentType(MediaType.APPLICATION_JSON)
+			.body(Vuelo.class)
+			.retrieve()
+			.toBodilessEntity(); 
+		}
 
-	        // Obtener el hotel y vuelo a través del servicio REST
-	        Hotel hotel = restClient
-	            .get()
-	            .uri("http://servicio-hoteles/hoteles/nombre/{nombreHotel}", nombreHotel)
-	            .header("Authorization", "Basic " + getBase64(user, contra))
-	            .retrieve()
-	            .body(Hotel.class)
-	            ;
-
-	        Vuelo vuelo = restClient
-	            .get()
-	            .uri("http://servicio-vuelos/vuelos/destino/{destinoVuelo}/fecha/{fechaVuelo}", destinoVuelo, fechaVuelo)
-	            .header("Authorization", "Basic " + getBase64(user, contra))
-	            .retrieve()
-	            .body(Vuelo.class)
-	            ;
-
-	        if (hotel == null || vuelo == null) {
-	            throw new IllegalArgumentException("No se encontró el hotel o vuelo especificado");
-	        }
-
-	        // Crear nueva reserva
-	        Reserva nuevaReserva = new Reserva();
-	        nuevaReserva.setIdreserva(0);  
-	        nuevaReserva.setHotel(hotel);  
-	        nuevaReserva.setvuelo(vuelo);  
-	        nuevaReserva.setPrecio(vuelo.getPrecio());   
-	        nuevaReserva.setUsuario(usuario); 
-
-	        // Enviar la nueva reserva al servicio REST
-	        restClient
-	            .post()
-	            .uri(url + "alta")
-	            .contentType(MediaType.APPLICATION_JSON)
-	            .body(nuevaReserva)
-	            .retrieve()
-	            .toBodilessEntity()
-	            ; // Ejecutar sincrónicamente
-	    }
-
-	    // Método auxiliar para codificar las credenciales
 	    private String getBase64(String user, String password) {
 	        String auth = user + ":" + password;
 	        return Base64.getEncoder().encodeToString(auth.getBytes());

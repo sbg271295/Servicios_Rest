@@ -6,6 +6,6 @@ import model.VueloDto;
 public interface VueloService {
     List<VueloDto> searchByDestinoandPlazas(String destino, int plazas);
     VueloDto searchById(int idVuelo);
-    void updatePlazas(int idVuelo,int plazasAnt,int plazasNuevas);
+    void updatePlazas(int idVuelo,int plazasNuevas);
     
 }
