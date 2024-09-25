@@ -24,21 +24,21 @@ public class VuelosController {
 		this.vuelosService = vuelosService;
 	}
 
-    @GetMapping(value = "buscarvuelo/{destino}/{plazas}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/buscarvuelo", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<VueloDto> obtenerVuelosPorDestinoYPlazas(
-            @PathVariable("destino") String destino, 
-            @PathVariable("plazas") int plazas) {
+            @RequestParam("destino") String destino, 
+            @RequestParam("plazas") int plazas) {
         return vuelosService.searchByDestinoandPlazas(destino, plazas);
     }
 
-    @GetMapping(value = "buscarvueloporid/{idVuelo}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public VueloDto obtenerVueloPorId(@PathVariable("idVuelo") int idVuelo) {
+    @GetMapping(value = "/buscarvueloporid", produces = MediaType.APPLICATION_JSON_VALUE)
+    public VueloDto obtenerVueloPorId(@RequestParam("idVuelo") int idVuelo) {
         return vuelosService.searchById(idVuelo);
     }
-    @PutMapping(value="actualizar/{idVuelo}/{plazasAnt/{plazasNew}}",consumes = MediaType.APPLICATION_JSON_VALUE)
-	public void actualizar(@PathVariable("idVuelo") int idVuelo,
-						   @PathVariable("plazasAnt") int plazasAnt,
-						   @PathVariable("plazasNew") int plazasNew) {
+    @PutMapping(value="/actualizar",consumes = MediaType.APPLICATION_JSON_VALUE)
+	public void actualizar(@RequestParam("idVuelo") int idVuelo,
+			               @RequestParam("plazasAnt") int plazasAnt,
+			               @RequestParam("plazasNew") int plazasNew) {
 		vuelosService.updatePlazas(idVuelo, plazasAnt, plazasNew);
 	}
 }
